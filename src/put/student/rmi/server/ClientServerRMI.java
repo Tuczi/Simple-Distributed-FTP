@@ -1,12 +1,13 @@
 package put.student.rmi.server;
 
-import com.sun.jndi.toolkit.url.Uri;
+import java.net.URI;
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.interfaces.ServerServerRMIInterface;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +43,7 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     }
 
     @Override
-    public Metadata putMeta(String id, long length) throws IOException, NotBoundException {
+    public Metadata putMeta(String id, long length) throws IOException, NotBoundException, URISyntaxException {
         initServerServerRMIList();
         for(int i=0; i <serverServerRMIList.length;i++)
             serverServerRMIList[i].putMeta(id, length);
@@ -63,7 +64,7 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     }
 
     @Override
-    public void put(String id, long part, byte[] data) throws IOException, NotBoundException {
+    public void put(String id, long part, byte[] data) throws IOException, NotBoundException, URISyntaxException {
         RandomAccessFile file = new RandomAccessFile(new File(ROOT, id), "rw");
 
         file.seek(BLOCK_SIZE * part);
@@ -74,13 +75,13 @@ public class ClientServerRMI implements ClientServerRMIInterface {
             serverServerRMIList[i].put(id, part, data);
     }
 
-    private void initServerServerRMIList() throws IOException, NotBoundException {
+    private void initServerServerRMIList() throws IOException, NotBoundException, URISyntaxException {
         if(serverServerRMIList != null)
             return;
 
         serverServerRMIList = new ServerServerRMIInterface[serverList.length];
         for (int i = 0; i < serverList.length; i++) {
-            Uri uri = new Uri(serverList[i]);
+            URI uri = new URI(serverList[i]);
             Registry registry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
             serverServerRMIList[i] = (ServerServerRMIInterface) registry.lookup("ServerServerRMIInterface");
         }

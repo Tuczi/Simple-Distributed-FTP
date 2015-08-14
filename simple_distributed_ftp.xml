@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="simple_distributed_ftp" default="all">
+
+
+    <property file="simple_distributed_ftp.properties"/>
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+    <property name="skip.tests" value="true"/>
+     -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="700m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/*.rbc/**"/>
+        <exclude name="**/*~/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.bundle/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/.hg/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/.tox/**"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/__pycache__/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/rcs/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.war"/>
+        <include name="*.ear"/>
+        <include name="*.apk"/>
+        <include name="*.zip"/>
+        <include name="*.swc"/>
+        <include name="*.ane"/>
+        <include name="*.egg"/>
+        <include name="*.jar"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <exclude name="**/?*.java"/>
+        <exclude name="**/?*.form"/>
+        <exclude name="**/?*.class"/>
+        <exclude name="**/?*.groovy"/>
+        <exclude name="**/?*.scala"/>
+        <exclude name="**/?*.flex"/>
+        <exclude name="**/?*.kt"/>
+        <exclude name="**/?*.clj"/>
+        <exclude name="**/?*.aj"/>
+    </patternset>
+
+    <!-- Modules -->
+
+
+    <!-- Module Simple Distributed FTP -->
+
+    <dirname property="module.simple_distributed_ftp.basedir" file="${ant.file}"/>
+
+
+    <property name="compiler.args.simple_distributed_ftp" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+
+    <property name="simple_distributed_ftp.output.dir"
+              value="${module.simple_distributed_ftp.basedir}/out/production/Simple Distributed FTP"/>
+    <property name="simple_distributed_ftp.testoutput.dir"
+              value="${module.simple_distributed_ftp.basedir}/out/test/Simple Distributed FTP"/>
+
+    <path id="simple_distributed_ftp.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="simple_distributed_ftp.module.production.classpath"/>
+
+    <path id="simple_distributed_ftp.runtime.production.module.classpath">
+        <pathelement location="${simple_distributed_ftp.output.dir}"/>
+    </path>
+
+    <path id="simple_distributed_ftp.module.classpath">
+        <pathelement location="${simple_distributed_ftp.output.dir}"/>
+    </path>
+
+    <path id="simple_distributed_ftp.runtime.module.classpath">
+        <pathelement location="${simple_distributed_ftp.testoutput.dir}"/>
+        <pathelement location="${simple_distributed_ftp.output.dir}"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.simple_distributed_ftp">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.simple_distributed_ftp">
+        <patternset refid="excluded.from.module.simple_distributed_ftp"/>
+    </patternset>
+
+    <path id="simple_distributed_ftp.module.sourcepath">
+        <dirset dir="${module.simple_distributed_ftp.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.simple_distributed_ftp"
+            depends="compile.module.simple_distributed_ftp.production,compile.module.simple_distributed_ftp.tests"
+            description="Compile module Simple Distributed FTP"/>
+
+    <target name="compile.module.simple_distributed_ftp.production"
+            description="Compile module Simple Distributed FTP; production classes">
+        <mkdir dir="${simple_distributed_ftp.output.dir}"/>
+        <javac destdir="${simple_distributed_ftp.output.dir}" debug="${compiler.debug}"
+               nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+            <compilerarg line="${compiler.args.simple_distributed_ftp}"/>
+            <bootclasspath refid="simple_distributed_ftp.module.bootclasspath"/>
+            <classpath refid="simple_distributed_ftp.module.production.classpath"/>
+            <src refid="simple_distributed_ftp.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.simple_distributed_ftp"/>
+        </javac>
+
+        <copy todir="${simple_distributed_ftp.output.dir}">
+            <fileset dir="${module.simple_distributed_ftp.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.simple_distributed_ftp.tests"
+            depends="compile.module.simple_distributed_ftp.production"
+            description="compile module Simple Distributed FTP; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.simple_distributed_ftp" description="cleanup module">
+        <delete dir="${simple_distributed_ftp.output.dir}"/>
+        <delete dir="${simple_distributed_ftp.testoutput.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean" depends="clean.module.simple_distributed_ftp" description="cleanup all"/>
+
+    <target name="build.modules" depends="init, clean, compile.module.simple_distributed_ftp"
+            description="build all modules"/>
+
+    <target name="all" depends="build.modules" description="build all"/>
+
+    <target name="build.fulltest" depends="build.modules" description="build jars for full test">
+        <mkdir dir="${module.simple_distributed_ftp.basedir}/out/jar"/>
+        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Client.jar"
+             basedir="${simple_distributed_ftp.output.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="put.student.main.ClientMain"/>
+            </manifest>
+            <fileset file="client.properties"/>
+        </jar>
+
+        <propertyfile file="server.properties">
+            <entry key="port" value="1090"/>
+        </propertyfile>
+        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server0.jar"
+             basedir="${simple_distributed_ftp.output.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+            </manifest>
+            <fileset file="server.properties"/>
+        </jar>
+
+        <propertyfile file="server.properties">
+            <entry key="port" value="1091"/>
+        </propertyfile>
+        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server1.jar"
+             basedir="${simple_distributed_ftp.output.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+            </manifest>
+            <fileset file="server.properties"/>
+        </jar>
+
+        <propertyfile file="server.properties">
+            <entry key="port" value="1092"/>
+        </propertyfile>
+        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server2.jar"
+             basedir="${simple_distributed_ftp.output.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+            </manifest>
+            <fileset file="server.properties"/>
+        </jar>
+
+        <propertyfile file="server.properties">
+            <entry key="port" value="1093"/>
+        </propertyfile>
+        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server3.jar"
+             basedir="${simple_distributed_ftp.output.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+            </manifest>
+            <fileset file="server.properties"/>
+        </jar>
+    </target>
+</project>

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -43,7 +44,7 @@ public class ClientServerRMIProxy {
         }
     }
 
-    public void putFile(final String from, final String to) throws IOException, NotBoundException {
+    public void putFile(final String from, final String to) throws IOException, NotBoundException, URISyntaxException {
         RandomAccessFile file = new RandomAccessFile(new File(from), "r");
         ClientServerRMIInterface mainClientServerRMI = getMainClientServerRMIInterface();
         Metadata meta = mainClientServerRMI.putMeta(to, file.length());
