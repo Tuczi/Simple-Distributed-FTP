@@ -25,7 +25,7 @@ public class RegistryFactory {
 
         ServerServerRMI serverServerRMI = new ServerServerRMI();
         ServerServerRMIInterface serverServerRMIstub = (ServerServerRMIInterface) UnicastRemoteObject.exportObject(serverServerRMI, 0);
-        registry.bind("ClientServerRMIInterface", serverServerRMIstub);
+        registry.bind("ServerServerRMIInterface", serverServerRMIstub);
 
         return registry;
     }

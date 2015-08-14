@@ -3,6 +3,7 @@ package put.student.utils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -19,7 +20,7 @@ public class PropertiesFactory {
 
     private Properties getProperties(String file) throws IOException {
         Properties prop = new Properties();
-        InputStream input = new FileInputStream(file);
+        InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
 
         // load a properties file
         prop.load(input);
