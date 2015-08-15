@@ -6,7 +6,6 @@ import put.student.utils.PropertiesFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.rmi.RemoteException;
 
 /**
  * Created by tkuczma on 14.08.15.
@@ -25,8 +24,9 @@ public class ServerServerRMI implements ServerServerRMIInterface {
     }
 
     @Override
-    public void putMeta(String id, long length) throws RemoteException {
-        //TODO set file length
+    public void putMeta(String id, long length) throws IOException {
+        RandomAccessFile file = new RandomAccessFile(new File(ROOT, id), "rw");
+        file.setLength(length);
     }
 
     @Override

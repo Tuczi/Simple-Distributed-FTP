@@ -52,12 +52,20 @@ public class ClientServerRMIProxy {
         Metadata meta = mainClientServerRMI.putMeta(to, file.length());
         ClientServerRMIInterface fileOwnerClientServerRMI = getFileOwnerClientServerRMI(meta)[0];
 
-        final int max = (int) Math.ceil((float) meta.getFileSize() / meta.getBlockSize());
+        final int max = (int) (meta.getFileSize() / meta.getBlockSize());
         byte[] data = new byte[(int) meta.getBlockSize()];
         for (long part = 0; part < max; part++) {
             //file.seek(meta.getBlockSize() * part);
             file.read(data);
             fileOwnerClientServerRMI.put(to, part, data);
+        }
+
+        //send last part
+        final int lastPartSize = (int) (meta.getFileSize() % meta.getBlockSize());
+        if (lastPartSize > 0) {
+            data = new byte[lastPartSize];
+            file.read(data);
+            fileOwnerClientServerRMI.put(to, max, data);
         }
     }
 

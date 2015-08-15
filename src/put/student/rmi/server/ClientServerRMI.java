@@ -70,7 +70,7 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     public void put(String id, long part, byte[] data) throws IOException, NotBoundException, URISyntaxException {
         RandomAccessFile file = new RandomAccessFile(new File(ROOT, id), "rw");
 
-        file.seek(BLOCK_SIZE * part);
+        file.seek(BLOCK_SIZE * part);//TODO check if it is redundant
         file.write(data);
 
         initServerServerRMIList();

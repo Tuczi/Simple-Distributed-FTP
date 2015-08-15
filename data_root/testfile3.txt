@@ -1,0 +1,2 @@
+This file will be modified.
+It have to be long to test if it is properly truncated.

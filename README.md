@@ -9,6 +9,7 @@ Simple test description:
 - 4 servers instances are running all time
 - run 1 client with GET method (download file)
 - run 1 client with PUT method (upload file)
+- run 1 client with PUT method (upload existing file - replace longer with shorter file)
 
 To run simple test just execute run.sh script.
 It will build project using Apache-Ant build and then start servers and clients.
