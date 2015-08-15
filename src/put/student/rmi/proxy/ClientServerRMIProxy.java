@@ -1,6 +1,5 @@
 package put.student.rmi.proxy;
 
-import com.sun.jndi.toolkit.url.Uri;
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
@@ -8,7 +7,7 @@ import put.student.utils.PropertiesFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -29,7 +28,7 @@ public class ClientServerRMIProxy {
         mainPort = Integer.parseInt(prop.getProperty("mainport"));//TODO const
     }
 
-    public void getFile(final String from, final String to) throws IOException, NotBoundException {
+    public void getFile(final String from, final String to) throws IOException, NotBoundException, URISyntaxException {
         ClientServerRMIInterface mainClientServerRMI = getMainClientServerRMIInterface();
         Metadata meta = mainClientServerRMI.getMeta(from);
         ClientServerRMIInterface[] fileOwnerClientServerRMI = getFileOwnerClientServerRMI(meta);
@@ -64,12 +63,12 @@ public class ClientServerRMIProxy {
         return (ClientServerRMIInterface) mainRegistry.lookup("ClientServerRMIInterface");
     }
 
-    private ClientServerRMIInterface[] getFileOwnerClientServerRMI(Metadata meta) throws RemoteException, NotBoundException, MalformedURLException {
+    private ClientServerRMIInterface[] getFileOwnerClientServerRMI(Metadata meta) throws RemoteException, NotBoundException, URISyntaxException {
         final int maxSize = (int) Math.ceil((float)meta.getFileSize()/meta.getBlockSize());
         ClientServerRMIInterface[] fileOwnerClientServerRMI = new ClientServerRMIInterface[Math.min(maxSize, meta.getOwnerList().length)];
 
         for (int i = 0; i < fileOwnerClientServerRMI.length; i++) {
-            Uri uri = new Uri(meta.getOwnerList()[i]);
+            URI uri = new URI("my://"+meta.getOwnerList()[i]);//protocol is necessary - use "my" protocolru
             Registry fileOwnerRegistry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
             fileOwnerClientServerRMI[i] = (ClientServerRMIInterface) fileOwnerRegistry.lookup("ClientServerRMIInterface");
         }

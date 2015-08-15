@@ -6,13 +6,13 @@ ant -f simple_distributed_ftp.xml build.fulltest
 cd out/jar
 for i in {0..3}; do
     echo "Starting server $i"
-    java -jar server$i/server.jar &
+    java -Djava.security.policy=java.security.AllPermission -jar server$i/server.jar &
 done
 
 #run client
 echo "Starting client"
-sleep 1
-java -jar client.jar GET testfile.txt downloaded.txt
+sleep 2
+java -Djava.security.policy=java.security.AllPermission -jar client.jar GET testfile.txt downloaded.txt
 echo "Done: client"
 
 #cleanup
