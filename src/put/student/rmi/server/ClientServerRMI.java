@@ -83,7 +83,7 @@ public class ClientServerRMI implements ClientServerRMIInterface {
 
         serverServerRMIList = new ServerServerRMIInterface[serverList.length];
         for (int i = 0; i < serverList.length; i++) {
-            URI uri = new URI(serverList[i]);
+            URI uri = new URI("my://" + serverList[i]);//TODO refactor this -construct URI from string "host:port"
             Registry registry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
             serverServerRMIList[i] = (ServerServerRMIInterface) registry.lookup("ServerServerRMIInterface");
         }

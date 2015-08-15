@@ -6,6 +6,9 @@ import put.student.utils.PropertiesFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.rmi.RemoteException;
 import java.util.Properties;
 
@@ -18,7 +21,7 @@ public class ServerServerRMI implements ServerServerRMIInterface {
 
     public ServerServerRMI() throws IOException {
         Properties prop = new PropertiesFactory().getServerProperties();
-        ROOT = new File(prop.getProperty("rootpath"));
+        ROOT = getROOTPath(prop);
         BLOCK_SIZE = Long.parseLong(prop.getProperty("blocksize"));
     }
 
@@ -30,8 +33,13 @@ public class ServerServerRMI implements ServerServerRMIInterface {
     @Override
     public void put(String id, long part, byte[] data) throws IOException {
         RandomAccessFile file = new RandomAccessFile(new File(ROOT, id), "rw");
-
-        file.seek(BLOCK_SIZE*part);
+        file.seek(BLOCK_SIZE * part);
         file.write(data);
+    }
+
+    // TODO refctor this (repeated code)
+    private File getROOTPath(Properties prop) throws UnsupportedEncodingException {
+        URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
+        return new File(new File(URLDecoder.decode(url.getFile(), "UTF-8")).getParent(), prop.getProperty("rootpath"));
     }
 }
