@@ -11,7 +11,7 @@ import java.util.Properties;
 
 /**
  * Created by tkuczma on 13.08.15.
- *
+ * <p>
  * Reads properties and provides helpers methods.
  */
 public class PropertiesFactory {
@@ -27,7 +27,7 @@ public class PropertiesFactory {
 
     private Properties properties;
 
-    private PropertiesFactory(Properties properties){
+    private PropertiesFactory(Properties properties) {
         this.properties = properties;
     }
 

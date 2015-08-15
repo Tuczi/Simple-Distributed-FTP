@@ -19,7 +19,7 @@ import java.rmi.registry.Registry;
 
 /**
  * Created by tkuczma on 13.08.15.
- *
+ * <p>
  * RMI class used in client - server communication.
  * It contains method to exchange file metadata and fragments between client and servers.
  */
@@ -48,7 +48,7 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     @Override
     public Metadata putMeta(String id, long length) throws IOException, NotBoundException, URISyntaxException {
         initServerServerRMIList();
-        for(int i=0; i <serverServerRMIList.length;i++)
+        for (int i = 0; i < serverServerRMIList.length; i++)
             serverServerRMIList[i].putMeta(id, length);
 
         return new Metadata(id, BLOCK_SIZE, length, serverList);
@@ -74,12 +74,12 @@ public class ClientServerRMI implements ClientServerRMIInterface {
         file.write(data);
 
         initServerServerRMIList();
-        for(int i=0; i <serverServerRMIList.length;i++)
+        for (int i = 0; i < serverServerRMIList.length; i++)
             serverServerRMIList[i].put(id, part, data);
     }
 
     private void initServerServerRMIList() throws IOException, NotBoundException, URISyntaxException {
-        if(serverServerRMIList != null)
+        if (serverServerRMIList != null)
             return;
 
         serverServerRMIList = new ServerServerRMIInterface[serverList.length];

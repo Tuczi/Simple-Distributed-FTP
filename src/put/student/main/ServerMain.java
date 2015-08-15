@@ -4,11 +4,10 @@ import put.student.utils.PropertiesFactory;
 import put.student.utils.RegistryFactory;
 
 import java.rmi.registry.Registry;
-import java.util.Properties;
 
 /**
  * Created by tkuczma on 13.08.15.
- *
+ * <p>
  * Server main class.
  * Just call RegistryFactory.createBindedRegistry
  */

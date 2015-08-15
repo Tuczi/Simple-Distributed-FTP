@@ -17,7 +17,7 @@ import java.rmi.registry.Registry;
 
 /**
  * Created by tkuczma on 14.08.15.
- *
+ * <p>
  * Proxy class for ClientServerRMI.
  * Its implements logic for downloading and uploading files.
  */
@@ -37,9 +37,9 @@ public class ClientServerRMIProxy {
         ClientServerRMIInterface[] fileOwnerClientServerRMI = getFileOwnerClientServerRMI(meta);
 
         RandomAccessFile file = new RandomAccessFile(new File(to), "rw");
-        final int max = (int) Math.ceil((float)meta.getFileSize()/meta.getBlockSize());
+        final int max = (int) Math.ceil((float) meta.getFileSize() / meta.getBlockSize());
         for (int part = 0; part < max; part++) {
-            byte[] response = fileOwnerClientServerRMI[ part % fileOwnerClientServerRMI.length ].get(from, part);
+            byte[] response = fileOwnerClientServerRMI[part % fileOwnerClientServerRMI.length].get(from, part);
 
             //file.seek(meta.getBlockSize() * part);
             file.write(response);
@@ -52,7 +52,7 @@ public class ClientServerRMIProxy {
         Metadata meta = mainClientServerRMI.putMeta(to, file.length());
         ClientServerRMIInterface fileOwnerClientServerRMI = getFileOwnerClientServerRMI(meta)[0];
 
-        final int max = (int) Math.ceil((float)meta.getFileSize()/meta.getBlockSize());
+        final int max = (int) Math.ceil((float) meta.getFileSize() / meta.getBlockSize());
         byte[] data = new byte[(int) meta.getBlockSize()];
         for (long part = 0; part < max; part++) {
             //file.seek(meta.getBlockSize() * part);
@@ -67,7 +67,7 @@ public class ClientServerRMIProxy {
     }
 
     private ClientServerRMIInterface[] getFileOwnerClientServerRMI(Metadata meta) throws RemoteException, NotBoundException, URISyntaxException {
-        final int maxSize = (int) Math.ceil((float)meta.getFileSize()/meta.getBlockSize());
+        final int maxSize = (int) Math.ceil((float) meta.getFileSize() / meta.getBlockSize());
         ClientServerRMIInterface[] fileOwnerClientServerRMI = new ClientServerRMIInterface[Math.min(maxSize, meta.getOwnerList().length)];
 
         for (int i = 0; i < fileOwnerClientServerRMI.length; i++) {

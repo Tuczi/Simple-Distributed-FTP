@@ -4,17 +4,16 @@ import put.student.rmi.proxy.ClientServerRMIProxy;
 
 /**
  * Created by tkuczma on 13.08.15.
- *
+ * <p>
  * Client main class.
  * Parse arguments and execute proper method.
  */
 public class ClientMain {
     /**
-     *
      * @param args: {GET,PUT} local_path remote_id
      */
     public static void main(String[] args) {
-        if(args.length <3 ) {
+        if (args.length < 3) {
             System.err.println("Bad args");
             return;
         }
@@ -24,7 +23,7 @@ public class ClientMain {
         final String to = args[2];
 
         try {
-            switch(method) {
+            switch (method) {
                 case "GET":
                     new ClientServerRMIProxy().getFile(from, to);
                     break;

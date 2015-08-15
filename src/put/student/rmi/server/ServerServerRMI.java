@@ -6,15 +6,11 @@ import put.student.utils.PropertiesFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.rmi.RemoteException;
-import java.util.Properties;
 
 /**
  * Created by tkuczma on 14.08.15.
- *
+ * <p>
  * RMI class used in server - server communication
  * (generally distributing file to replicas).
  */

@@ -14,7 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Created by tkuczma on 13.08.15.
- *
+ * <p>
  * Keeps RMI registry names as constatns.
  * Creates and binds registry.
  */

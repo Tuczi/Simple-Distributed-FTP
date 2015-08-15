@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 /**
  * Created by tkuczma on 15.08.15.
- *
+ * <p>
  * URI Util/Factory
  */
 public class URIUtil {
