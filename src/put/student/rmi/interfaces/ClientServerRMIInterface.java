@@ -13,10 +13,7 @@ import java.rmi.RemoteException;
  */
 public interface ClientServerRMIInterface extends Remote {
     Metadata getMeta(String id) throws IOException;
-
     Metadata putMeta(String id, long length) throws IOException, NotBoundException, URISyntaxException;
-
     byte[] get(String id, long part) throws IOException;
-
     void put(String id, long part, byte[] data) throws IOException, NotBoundException, URISyntaxException;
 }

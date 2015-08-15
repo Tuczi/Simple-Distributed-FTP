@@ -14,15 +14,18 @@ import java.util.Properties;
 
 /**
  * Created by tkuczma on 14.08.15.
+ *
+ * RMI class used in server - server communication
+ * (generally distributing file to replicas).
  */
 public class ServerServerRMI implements ServerServerRMIInterface {
     private final File ROOT;
     private final long BLOCK_SIZE;
 
     public ServerServerRMI() throws IOException {
-        Properties prop = new PropertiesFactory().getServerProperties();
-        ROOT = getROOTPath(prop);
-        BLOCK_SIZE = Long.parseLong(prop.getProperty("blocksize"));
+        PropertiesFactory prop = PropertiesFactory.getServerProperties();
+        ROOT = prop.getROOT();
+        BLOCK_SIZE = prop.getBLOCK_SIZE();
     }
 
     @Override
@@ -37,9 +40,4 @@ public class ServerServerRMI implements ServerServerRMIInterface {
         file.write(data);
     }
 
-    // TODO refctor this (repeated code)
-    private File getROOTPath(Properties prop) throws UnsupportedEncodingException {
-        URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
-        return new File(new File(URLDecoder.decode(url.getFile(), "UTF-8")).getParent(), prop.getProperty("rootpath"));
-    }
 }

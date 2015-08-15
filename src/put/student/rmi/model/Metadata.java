@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * Created by tkuczma on 14.08.15.
+ *
+ * File metadata model used in RMI communication.
  */
 public class Metadata implements Serializable {
     private String id;

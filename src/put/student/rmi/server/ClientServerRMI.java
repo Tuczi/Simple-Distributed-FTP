@@ -1,15 +1,14 @@
 package put.student.rmi.server;
 
-import java.net.URI;
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.interfaces.ServerServerRMIInterface;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
+import put.student.utils.URIUtil;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,10 +16,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Properties;
 
 /**
  * Created by tkuczma on 13.08.15.
+ *
+ * RMI class used in client - server communication.
+ * It contains method to exchange file metadata and fragments between client and servers.
  */
 public class ClientServerRMI implements ClientServerRMIInterface {
     private final File ROOT;
@@ -30,10 +31,10 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     private ServerServerRMIInterface[] serverServerRMIList = null;
 
     public ClientServerRMI() throws IOException {
-        Properties prop = new PropertiesFactory().getServerProperties();
-        ROOT = getROOTPath(prop);
-        BLOCK_SIZE = Long.parseLong(prop.getProperty("blocksize"));
-        serverList = prop.getProperty("servers").split(" ");
+        PropertiesFactory prop = PropertiesFactory.getServerProperties();
+        ROOT = prop.getROOT();
+        BLOCK_SIZE = prop.getBLOCK_SIZE();
+        serverList = prop.getServerList();
     }
 
     @Override
@@ -83,14 +84,9 @@ public class ClientServerRMI implements ClientServerRMIInterface {
 
         serverServerRMIList = new ServerServerRMIInterface[serverList.length];
         for (int i = 0; i < serverList.length; i++) {
-            URI uri = new URI("my://" + serverList[i]);//TODO refactor this -construct URI from string "host:port"
+            URI uri = URIUtil.getURI(serverList[i]);
             Registry registry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
             serverServerRMIList[i] = (ServerServerRMIInterface) registry.lookup("ServerServerRMIInterface");
         }
-    }
-
-    private File getROOTPath(Properties prop) throws UnsupportedEncodingException {
-        URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
-        return new File(new File(URLDecoder.decode(url.getFile(), "UTF-8")).getParent(), prop.getProperty("rootpath"));
     }
 }

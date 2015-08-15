@@ -3,6 +3,7 @@ package put.student.rmi.proxy;
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
+import put.student.utils.URIUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,19 +14,21 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Properties;
 
 /**
  * Created by tkuczma on 14.08.15.
+ *
+ * Proxy class for ClientServerRMI.
+ * Its implements logic for downloading and uploading files.
  */
 public class ClientServerRMIProxy {
     private String mainHost;
     private int mainPort;
 
     public ClientServerRMIProxy() throws IOException {
-        Properties prop = new PropertiesFactory().getClientProperties();
-        mainHost = prop.getProperty("mainhost");//TODO const
-        mainPort = Integer.parseInt(prop.getProperty("mainport"));//TODO const
+        PropertiesFactory prop = PropertiesFactory.getClientProperties();
+        mainHost = prop.getMainHost();
+        mainPort = prop.getMainPort();
     }
 
     public void getFile(final String from, final String to) throws IOException, NotBoundException, URISyntaxException {
@@ -68,7 +71,7 @@ public class ClientServerRMIProxy {
         ClientServerRMIInterface[] fileOwnerClientServerRMI = new ClientServerRMIInterface[Math.min(maxSize, meta.getOwnerList().length)];
 
         for (int i = 0; i < fileOwnerClientServerRMI.length; i++) {
-            URI uri = new URI("my://"+meta.getOwnerList()[i]);//protocol is necessary - use "my" protocolru
+            URI uri = URIUtil.getURI(meta.getOwnerList()[i]);
             Registry fileOwnerRegistry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
             fileOwnerClientServerRMI[i] = (ClientServerRMIInterface) fileOwnerRegistry.lookup("ClientServerRMIInterface");
         }

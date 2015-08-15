@@ -2,6 +2,12 @@ package put.student.main;
 
 import put.student.rmi.proxy.ClientServerRMIProxy;
 
+/**
+ * Created by tkuczma on 13.08.15.
+ *
+ * Client main class.
+ * Parse arguments and execute proper method.
+ */
 public class ClientMain {
     /**
      *
