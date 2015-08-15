@@ -71,6 +71,8 @@
               value="${module.simple_distributed_ftp.basedir}/out/production/Simple Distributed FTP"/>
     <property name="simple_distributed_ftp.testoutput.dir"
               value="${module.simple_distributed_ftp.basedir}/out/test/Simple Distributed FTP"/>
+    <property name="simple_distributed_ftp.jaroutput.dir"
+              value="${module.simple_distributed_ftp.basedir}/out/jar"/>
 
     <path id="simple_distributed_ftp.module.bootclasspath">
         <!-- Paths to be included in compilation bootclasspath -->
@@ -138,6 +140,7 @@
     <target name="clean.module.simple_distributed_ftp" description="cleanup module">
         <delete dir="${simple_distributed_ftp.output.dir}"/>
         <delete dir="${simple_distributed_ftp.testoutput.dir}"/>
+        <delete dir="${simple_distributed_ftp.jaroutput.dir}"/>
     </target>
 
     <target name="init" description="Build initialization">
@@ -152,55 +155,76 @@
     <target name="all" depends="build.modules" description="build all"/>
 
     <target name="build.fulltest" depends="build.modules" description="build jars for full test">
-        <mkdir dir="${module.simple_distributed_ftp.basedir}/out/jar"/>
-        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Client.jar"
+        <mkdir dir="${simple_distributed_ftp.jaroutput.dir}"/>
+        <jar destfile="${simple_distributed_ftp.jaroutput.dir}/client.jar"
              basedir="${simple_distributed_ftp.output.dir}">
             <manifest>
                 <attribute name="Main-Class" value="put.student.main.ClientMain"/>
+                <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset file="client.properties"/>
         </jar>
 
+        <mkdir dir="${simple_distributed_ftp.jaroutput.dir}/server0/data_root"/>
+        <copy todir="${simple_distributed_ftp.jaroutput.dir}/server0/data_root">
+            <fileset dir="${module.simple_distributed_ftp.basedir}/data_root"/>
+        </copy>
         <propertyfile file="server.properties">
             <entry key="port" value="1090"/>
         </propertyfile>
-        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server0.jar"
+        <jar destfile="${simple_distributed_ftp.jaroutput.dir}/server0/server.jar"
              basedir="${simple_distributed_ftp.output.dir}">
             <manifest>
                 <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+                <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset file="server.properties"/>
         </jar>
 
+        <mkdir dir="${simple_distributed_ftp.jaroutput.dir}/server1/data_root"/>
+        <copy todir="${simple_distributed_ftp.jaroutput.dir}/server1/data_root">
+            <fileset dir="${module.simple_distributed_ftp.basedir}/data_root"/>
+        </copy>
         <propertyfile file="server.properties">
             <entry key="port" value="1091"/>
         </propertyfile>
-        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server1.jar"
+        <jar destfile="${simple_distributed_ftp.jaroutput.dir}/server1/server.jar"
              basedir="${simple_distributed_ftp.output.dir}">
             <manifest>
                 <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+                <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset file="server.properties"/>
         </jar>
 
+        <mkdir dir="${simple_distributed_ftp.jaroutput.dir}/server2/data_root"/>
+        <copy todir="${simple_distributed_ftp.jaroutput.dir}/server2/data_root">
+            <fileset dir="${module.simple_distributed_ftp.basedir}/data_root"/>
+        </copy>
         <propertyfile file="server.properties">
             <entry key="port" value="1092"/>
         </propertyfile>
-        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server2.jar"
+        <jar destfile="${simple_distributed_ftp.jaroutput.dir}/server2/server.jar"
              basedir="${simple_distributed_ftp.output.dir}">
             <manifest>
                 <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+                <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset file="server.properties"/>
         </jar>
 
+        <mkdir dir="${simple_distributed_ftp.jaroutput.dir}/server3/data_root"/>
+        <copy todir="${simple_distributed_ftp.jaroutput.dir}/server3/data_root">
+            <fileset dir="${module.simple_distributed_ftp.basedir}/data_root"/>
+        </copy>
         <propertyfile file="server.properties">
             <entry key="port" value="1093"/>
         </propertyfile>
-        <jar destfile="${module.simple_distributed_ftp.basedir}/out/jar/Server3.jar"
+        <jar destfile="${simple_distributed_ftp.jaroutput.dir}/server3/server.jar"
              basedir="${simple_distributed_ftp.output.dir}">
             <manifest>
                 <attribute name="Main-Class" value="put.student.main.ServerMain"/>
+                <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset file="server.properties"/>
         </jar>

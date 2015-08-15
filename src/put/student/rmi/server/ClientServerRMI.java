@@ -8,6 +8,8 @@ import put.student.utils.PropertiesFactory;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,7 +31,7 @@ public class ClientServerRMI implements ClientServerRMIInterface {
 
     public ClientServerRMI() throws IOException {
         Properties prop = new PropertiesFactory().getServerProperties();
-        ROOT = new File(prop.getProperty("rootpath"));
+        ROOT = getROOTPath(prop);
         BLOCK_SIZE = Long.parseLong(prop.getProperty("blocksize"));
         serverList = prop.getProperty("servers").split(" ");
     }
@@ -85,5 +87,10 @@ public class ClientServerRMI implements ClientServerRMIInterface {
             Registry registry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
             serverServerRMIList[i] = (ServerServerRMIInterface) registry.lookup("ServerServerRMIInterface");
         }
+    }
+
+    private File getROOTPath(Properties prop) throws UnsupportedEncodingException {
+        URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
+        return new File(new File(URLDecoder.decode(url.getFile(), "UTF-8")).getParent(), prop.getProperty("rootpath"));
     }
 }

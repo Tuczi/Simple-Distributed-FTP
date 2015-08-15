@@ -18,7 +18,7 @@ public class ServerMain {
 
             Registry registry = new RegistryFactory().createBindedRegistry(port);
 
-            System.err.println("Server ready");
+            System.err.println("Server ready. Port: " + port);
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
