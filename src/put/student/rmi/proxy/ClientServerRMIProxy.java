@@ -63,7 +63,6 @@ public class ClientServerRMIProxy {
         final int max = (int) (meta.getFileSize() / meta.getBlockSize());
         byte[] data = new byte[(int) meta.getBlockSize()];
         for (long part = 0; part < max; part++) {
-            //file.seek(meta.getBlockSize() * part);
             file.read(data);
             fileOwnerClientServerRMI.put(to, part, data);
         }

@@ -2,6 +2,7 @@ package put.student.rmi.server;
 
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.interfaces.ServerServerRMIInterface;
+import put.student.rmi.jobs.UploadJob;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
 import put.student.utils.URIUtil;
@@ -16,6 +17,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by tkuczma on 13.08.15.
@@ -29,11 +32,13 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     private final String[] serverList;
 
     private ServerServerRMIInterface[] serverServerRMIList = null;
+    private int threadsCount;
 
     public ClientServerRMI() throws IOException {
         PropertiesFactory prop = PropertiesFactory.getServerProperties();
         ROOT = prop.getROOT();
         BLOCK_SIZE = prop.getBLOCK_SIZE();
+        threadsCount = prop.getThreadsCunt();
         serverList = prop.getServerList();
     }
 
@@ -70,12 +75,14 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     public void put(String id, long part, byte[] data) throws IOException, NotBoundException, URISyntaxException {
         RandomAccessFile file = new RandomAccessFile(new File(ROOT, id), "rw");
 
-        file.seek(BLOCK_SIZE * part);//TODO check if it is redundant
-        file.write(data);
-
         initServerServerRMIList();
-        for (int i = 0; i < serverServerRMIList.length; i++)
-            serverServerRMIList[i].put(id, part, data);
+        ExecutorService exec = Executors.newFixedThreadPool(threadsCount);
+        try {
+            for (int i = 0; i < serverServerRMIList.length; i++)
+                exec.submit(new UploadJob(serverServerRMIList[i], id, part, data));
+        } finally {
+            exec.shutdown();
+        }
     }
 
     private void initServerServerRMIList() throws IOException, NotBoundException, URISyntaxException {
