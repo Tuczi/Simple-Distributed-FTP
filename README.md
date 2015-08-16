@@ -15,8 +15,7 @@ To run simple test just execute run.sh script.
 It will build project using Apache-Ant build and then start servers and clients.
 
 ## Improvements (TODO)
-- Multithread (use ThreadPool to parallel downloading file and copying file to replicas)
-- Replication limit (files are stored in limited number of servers (for example x=sqrt(n) copies of file, where n is number of servers). All servers stores map<fileId, array<host>>)
+- Replication limit/partition tolerance (files are stored in limited number of servers (for example x=sqrt(n) copies of file, where n is number of servers). All servers stores map<fileId, array<host>>)
 - Failure tolerance (upload, download, server instace)
 - Dynamic number of servers (add or remove server)
 
