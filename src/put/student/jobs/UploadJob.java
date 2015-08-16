@@ -1,4 +1,4 @@
-package put.student.rmi.jobs;
+package put.student.jobs;
 
 import put.student.rmi.interfaces.ServerServerRMIInterface;
 
@@ -6,6 +6,8 @@ import java.util.concurrent.Callable;
 
 /**
  * Created by tkuczma on 16.08.15.
+ * <p>
+ * Job used to upload part of file using ThreadPoll in ClientServerRMI
  */
 public class UploadJob implements Callable<Object> {
     private final ServerServerRMIInterface serverServerRMI;

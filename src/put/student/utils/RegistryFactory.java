@@ -6,8 +6,11 @@ import put.student.rmi.server.ClientServerRMI;
 import put.student.rmi.server.ServerServerRMI;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -19,8 +22,8 @@ import java.rmi.server.UnicastRemoteObject;
  * Creates and binds registry.
  */
 public class RegistryFactory {
-    public static final String CLIENT_SERVER_RMI_NAME = "ClientServerRMIInterface";
-    public static final String SERVER_SERVER_RMI_NAME = "ServerServerRMIInterface";
+    private static final String CLIENT_SERVER_RMI_NAME = "ClientServerRMIInterface";
+    private static final String SERVER_SERVER_RMI_NAME = "ServerServerRMIInterface";
 
     public Registry createBindedRegistry(final int port) throws IOException, AlreadyBoundException, URISyntaxException {
         Registry registry = LocateRegistry.createRegistry(port);
@@ -34,5 +37,15 @@ public class RegistryFactory {
         registry.bind(SERVER_SERVER_RMI_NAME, serverServerRMIstub);
 
         return registry;
+    }
+
+    public ServerServerRMIInterface[] createServerServerRMIList(String[] serverList) throws URISyntaxException, RemoteException, NotBoundException {
+        ServerServerRMIInterface[] serverServerRMIList = new ServerServerRMIInterface[serverList.length];
+        for (int i = 0; i < serverList.length; i++) {
+            URI uri = URIUtil.getURI(serverList[i]);
+            Registry registry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
+            serverServerRMIList[i] = (ServerServerRMIInterface) registry.lookup(SERVER_SERVER_RMI_NAME);
+        }
+        return serverServerRMIList;
     }
 }

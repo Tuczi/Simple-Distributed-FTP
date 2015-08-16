@@ -1,22 +1,23 @@
 package put.student.rmi.server;
 
+import put.student.jobs.UploadJob;
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.interfaces.ServerServerRMIInterface;
-import put.student.rmi.jobs.UploadJob;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
-import put.student.utils.URIUtil;
+import put.student.utils.RegistryFactory;
 
-import java.io.*;
-import java.net.URI;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.rmi.NotBoundException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -72,9 +73,7 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     }
 
     @Override
-    public void put(String id, long part, byte[] data) throws IOException, NotBoundException, URISyntaxException {
-        RandomAccessFile file = new RandomAccessFile(new File(ROOT, id), "rw");
-
+    public void put(String id, long part, byte[] data) throws NotBoundException, URISyntaxException, RemoteException {
         initServerServerRMIList();
         ExecutorService exec = Executors.newFixedThreadPool(threadsCount);
         try {
@@ -85,15 +84,10 @@ public class ClientServerRMI implements ClientServerRMIInterface {
         }
     }
 
-    private void initServerServerRMIList() throws IOException, NotBoundException, URISyntaxException {
+    private void initServerServerRMIList() throws RemoteException, NotBoundException, URISyntaxException {
         if (serverServerRMIList != null)
             return;
 
-        serverServerRMIList = new ServerServerRMIInterface[serverList.length];
-        for (int i = 0; i < serverList.length; i++) {
-            URI uri = URIUtil.getURI(serverList[i]);
-            Registry registry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
-            serverServerRMIList[i] = (ServerServerRMIInterface) registry.lookup("ServerServerRMIInterface");
-        }
+        serverServerRMIList = new RegistryFactory().createServerServerRMIList(serverList);
     }
 }

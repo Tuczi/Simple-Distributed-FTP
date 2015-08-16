@@ -11,6 +11,6 @@ import java.net.URISyntaxException;
 public class URIUtil {
 
     public static URI getURI(String hostport) throws URISyntaxException {
-        return new URI("my://" + hostport);//protocol is necessary - just use "my" protocol
+        return new URI("//" + hostport);//protocol separator is necessary - just use "empty" protocol
     }
 }
