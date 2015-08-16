@@ -8,10 +8,10 @@ import java.io.Serializable;
  * File metadata model used in RMI communication.
  */
 public class Metadata implements Serializable {
-    private String id;
-    private long blockSize;
-    private long fileSize;
-    private String[] ownerList;
+    private final String id;
+    private final long blockSize;
+    private final long fileSize;
+    private final String[] ownerList;
 
     public Metadata(String id, long blockSize, long fileSize, String[] ownerList) {
         this.id = id;

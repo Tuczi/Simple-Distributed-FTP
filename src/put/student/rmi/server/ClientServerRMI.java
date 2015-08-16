@@ -31,9 +31,8 @@ public class ClientServerRMI implements ClientServerRMIInterface {
     private final File ROOT;
     private final long BLOCK_SIZE;
     private final String[] serverList;
-
+    private final int threadsCount;
     private ServerServerRMIInterface[] serverServerRMIList = null;
-    private int threadsCount;
 
     public ClientServerRMI() throws IOException {
         PropertiesFactory prop = PropertiesFactory.getServerProperties();

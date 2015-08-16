@@ -4,17 +4,13 @@ import put.student.jobs.DownloadJob;
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
-import put.student.utils.URIUtil;
+import put.student.utils.RegistryFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,9 +21,9 @@ import java.util.concurrent.Executors;
  * Its implements logic for downloading and uploading files.
  */
 public class ClientServerRMIProxy {
-    private String mainHost;
-    private int mainPort;
-    private int threadsCount;
+    private final String mainHost;
+    private final int mainPort;
+    private final int threadsCount;
 
     public ClientServerRMIProxy() throws IOException {
         PropertiesFactory prop = PropertiesFactory.getClientProperties();
@@ -37,9 +33,10 @@ public class ClientServerRMIProxy {
     }
 
     public void getFile(final String from, final String to) throws IOException, NotBoundException, URISyntaxException {
-        ClientServerRMIInterface mainClientServerRMI = getMainClientServerRMIInterface();
+        RegistryFactory registryFactory = new RegistryFactory();
+        ClientServerRMIInterface mainClientServerRMI = registryFactory.getMainClientServerRMIInterface(mainHost, mainPort);
         Metadata meta = mainClientServerRMI.getMeta(from);
-        ClientServerRMIInterface[] fileOwnerClientServerRMI = getFileOwnerClientServerRMI(meta);
+        ClientServerRMIInterface[] fileOwnerClientServerRMI = registryFactory.getFileOwnerClientServerRMI(meta);
 
         ExecutorService exec = Executors.newFixedThreadPool(threadsCount);
         RandomAccessFile file = new RandomAccessFile(new File(to), "rw");
@@ -51,14 +48,14 @@ public class ClientServerRMIProxy {
         } finally {
             exec.shutdown();
         }
-
     }
 
     public void putFile(final String from, final String to) throws IOException, NotBoundException, URISyntaxException {
         RandomAccessFile file = new RandomAccessFile(new File(from), "r");
-        ClientServerRMIInterface mainClientServerRMI = getMainClientServerRMIInterface();
+        RegistryFactory registryFactory = new RegistryFactory();
+        ClientServerRMIInterface mainClientServerRMI = registryFactory.getMainClientServerRMIInterface(mainHost, mainPort);
         Metadata meta = mainClientServerRMI.putMeta(to, file.length());
-        ClientServerRMIInterface fileOwnerClientServerRMI = getFileOwnerClientServerRMI(meta)[0];
+        ClientServerRMIInterface fileOwnerClientServerRMI = registryFactory.getFileOwnerClientServerRMI(meta)[0];
 
         final int max = (int) (meta.getFileSize() / meta.getBlockSize());
         byte[] data = new byte[(int) meta.getBlockSize()];
@@ -74,23 +71,5 @@ public class ClientServerRMIProxy {
             file.read(data);
             fileOwnerClientServerRMI.put(to, max, data);
         }
-    }
-
-    private ClientServerRMIInterface getMainClientServerRMIInterface() throws RemoteException, NotBoundException {
-        Registry mainRegistry = LocateRegistry.getRegistry(mainHost, mainPort);
-        return (ClientServerRMIInterface) mainRegistry.lookup("ClientServerRMIInterface");
-    }
-
-    private ClientServerRMIInterface[] getFileOwnerClientServerRMI(Metadata meta) throws RemoteException, NotBoundException, URISyntaxException {
-        final int maxSize = (int) Math.ceil((float) meta.getFileSize() / meta.getBlockSize());
-        ClientServerRMIInterface[] fileOwnerClientServerRMI = new ClientServerRMIInterface[Math.min(maxSize, meta.getOwnerList().length)];
-
-        for (int i = 0; i < fileOwnerClientServerRMI.length; i++) {
-            URI uri = URIUtil.getURI(meta.getOwnerList()[i]);
-            Registry fileOwnerRegistry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
-            fileOwnerClientServerRMI[i] = (ClientServerRMIInterface) fileOwnerRegistry.lookup("ClientServerRMIInterface");
-        }
-
-        return fileOwnerClientServerRMI;
     }
 }

@@ -16,7 +16,7 @@ public class DownloadJob implements Callable<Void> {
     private final ClientServerRMIInterface[] fileOwnerClientServerRMI;
     private final RandomAccessFile file;
     private final int part;
-    private Metadata meta;
+    private final Metadata meta;
 
     public DownloadJob(ClientServerRMIInterface[] fileOwnerClientServerRMI, Metadata meta, RandomAccessFile file, int part) {
         this.fileOwnerClientServerRMI = fileOwnerClientServerRMI;

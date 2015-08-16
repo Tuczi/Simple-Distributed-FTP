@@ -2,6 +2,7 @@ package put.student.utils;
 
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.interfaces.ServerServerRMIInterface;
+import put.student.rmi.model.Metadata;
 import put.student.rmi.server.ClientServerRMI;
 import put.student.rmi.server.ServerServerRMI;
 
@@ -39,7 +40,7 @@ public class RegistryFactory {
         return registry;
     }
 
-    public ServerServerRMIInterface[] createServerServerRMIList(String[] serverList) throws URISyntaxException, RemoteException, NotBoundException {
+    public ServerServerRMIInterface[] createServerServerRMIList(final String[] serverList) throws URISyntaxException, RemoteException, NotBoundException {
         ServerServerRMIInterface[] serverServerRMIList = new ServerServerRMIInterface[serverList.length];
         for (int i = 0; i < serverList.length; i++) {
             URI uri = URIUtil.getURI(serverList[i]);
@@ -47,5 +48,23 @@ public class RegistryFactory {
             serverServerRMIList[i] = (ServerServerRMIInterface) registry.lookup(SERVER_SERVER_RMI_NAME);
         }
         return serverServerRMIList;
+    }
+
+    public ClientServerRMIInterface getMainClientServerRMIInterface(final String mainHost, final int mainPort) throws RemoteException, NotBoundException {
+        Registry mainRegistry = LocateRegistry.getRegistry(mainHost, mainPort);
+        return (ClientServerRMIInterface) mainRegistry.lookup(CLIENT_SERVER_RMI_NAME);
+    }
+
+    public ClientServerRMIInterface[] getFileOwnerClientServerRMI(final Metadata meta) throws RemoteException, NotBoundException, URISyntaxException {
+        final int maxSize = (int) Math.ceil((float) meta.getFileSize() / meta.getBlockSize());
+        ClientServerRMIInterface[] fileOwnerClientServerRMI = new ClientServerRMIInterface[Math.min(maxSize, meta.getOwnerList().length)];
+
+        for (int i = 0; i < fileOwnerClientServerRMI.length; i++) {
+            URI uri = URIUtil.getURI(meta.getOwnerList()[i]);
+            Registry fileOwnerRegistry = LocateRegistry.getRegistry(uri.getHost(), uri.getPort());
+            fileOwnerClientServerRMI[i] = (ClientServerRMIInterface) fileOwnerRegistry.lookup(CLIENT_SERVER_RMI_NAME);
+        }
+
+        return fileOwnerClientServerRMI;
     }
 }
