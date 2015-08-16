@@ -1,5 +1,6 @@
 package put.student.rmi.proxy;
 
+import put.student.jobs.DownloadJob;
 import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.model.Metadata;
 import put.student.utils.PropertiesFactory;
@@ -14,6 +15,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by tkuczma on 14.08.15.
@@ -24,11 +27,13 @@ import java.rmi.registry.Registry;
 public class ClientServerRMIProxy {
     private String mainHost;
     private int mainPort;
+    private int threadsCount;
 
     public ClientServerRMIProxy() throws IOException {
         PropertiesFactory prop = PropertiesFactory.getClientProperties();
         mainHost = prop.getMainHost();
         mainPort = prop.getMainPort();
+        threadsCount = prop.getThreadsCunt();
     }
 
     public void getFile(final String from, final String to) throws IOException, NotBoundException, URISyntaxException {
@@ -36,14 +41,17 @@ public class ClientServerRMIProxy {
         Metadata meta = mainClientServerRMI.getMeta(from);
         ClientServerRMIInterface[] fileOwnerClientServerRMI = getFileOwnerClientServerRMI(meta);
 
+        ExecutorService exec = Executors.newFixedThreadPool(threadsCount);
         RandomAccessFile file = new RandomAccessFile(new File(to), "rw");
         final int max = (int) Math.ceil((float) meta.getFileSize() / meta.getBlockSize());
-        for (int part = 0; part < max; part++) {
-            byte[] response = fileOwnerClientServerRMI[part % fileOwnerClientServerRMI.length].get(from, part);
+        try {
+            for (int part = 0; part < max; part++)
+                exec.submit(new DownloadJob(fileOwnerClientServerRMI, meta, file, part));
 
-            //file.seek(meta.getBlockSize() * part);
-            file.write(response);
+        } finally {
+            exec.shutdown();
         }
+
     }
 
     public void putFile(final String from, final String to) throws IOException, NotBoundException, URISyntaxException {

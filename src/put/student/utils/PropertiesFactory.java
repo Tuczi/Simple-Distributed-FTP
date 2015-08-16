@@ -23,6 +23,7 @@ public class PropertiesFactory {
     private static final String MAIN_HOST_PROPERTY = "mainhost";
     private static final String MAIN_PORT_PROPERTY = "mainport";
     private static final String PORT_PROPERTY = "port";
+    private static final String THREADS_COUNT_PROPERTY = "threadscount";
     private static final String SERVERS_LIST_SEPARATOR = " ";
 
     private Properties properties;
@@ -72,5 +73,9 @@ public class PropertiesFactory {
 
     public int getPort() {
         return Integer.parseInt(properties.getProperty(PORT_PROPERTY));
+    }
+
+    public int getThreadsCunt() {
+        return Integer.parseInt(properties.getProperty(THREADS_COUNT_PROPERTY));
     }
 }
