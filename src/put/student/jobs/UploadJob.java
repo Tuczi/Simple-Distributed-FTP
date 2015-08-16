@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
  * <p>
  * Job used to upload part of file using ThreadPoll in ClientServerRMI
  */
-public class UploadJob implements Callable<Object> {
+public class UploadJob implements Callable<Void> {
     private final ServerServerRMIInterface serverServerRMI;
     private final String id;
     private final long part;
@@ -23,9 +23,9 @@ public class UploadJob implements Callable<Object> {
     }
 
     @Override
-    public Object call() throws Exception {
+    public Void call() throws Exception {
         serverServerRMI.put(id, part, data);
-        return new Object();
+        return null;
     }
 
 }

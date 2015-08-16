@@ -4,13 +4,14 @@ import put.student.rmi.interfaces.ClientServerRMIInterface;
 import put.student.rmi.model.Metadata;
 
 import java.io.RandomAccessFile;
+import java.util.concurrent.Callable;
 
 /**
  * Created by tkuczma on 16.08.15.
  * <p>
  * Job used to download part of file using ThreadPoll in ClientServerRMIProxy
  */
-public class DownloadJob implements java.util.concurrent.Callable<Object> {
+public class DownloadJob implements Callable<Void> {
 
     private final ClientServerRMIInterface[] fileOwnerClientServerRMI;
     private final RandomAccessFile file;
@@ -25,7 +26,7 @@ public class DownloadJob implements java.util.concurrent.Callable<Object> {
     }
 
     @Override
-    public Object call() throws Exception {
+    public Void call() throws Exception {
         byte[] response = fileOwnerClientServerRMI[part % fileOwnerClientServerRMI.length].get(meta.getId(), part);
 
         synchronized (file) {
@@ -33,7 +34,7 @@ public class DownloadJob implements java.util.concurrent.Callable<Object> {
             file.write(response);
         }
 
-        return new Object();
+        return null;
     }
 
 }
